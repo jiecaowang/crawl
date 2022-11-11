@@ -37,7 +37,7 @@ const fetchAudio = async (currentBookNum: number) => {
             if (err && err.response && err.response.status) {
                 console.log(`Failed with status code: ${err.response.status} after 10 retry attempts`);
             }
-            throw new Error(`Failed with status code: ${err.response.status} after 10 retry attempts`);
+            throw new Error(`Failed book`);
         };
       });
     currentDownloadCounter--;
@@ -91,7 +91,7 @@ const fetchAudio = async (currentBookNum: number) => {
                 if (err && err.response && err.response.status) {
                     console.log(`Failed with status code: ${err.response.status} after 10 retry attempts`);
                 }
-                throw new Error(`Failed with status code: ${err.response.status} after 10 retry attempts`);
+                throw new Error(`Failed lifestudy`);
             }
           });
         currentDownloadCounter--;
