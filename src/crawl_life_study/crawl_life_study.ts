@@ -152,8 +152,8 @@ const fetchAndSaveLifeStudyAudio = async (currentBookNum: string, lastLifeStudyN
             }).catch((err) => {
             if (err && err.response && err.response.status === 404) {
                 console.log(`no such audio file, book: ${currentBookNum}, lifestudy: ${lifeStudyNum}, ${audioUrl}`);
-                if (missedLifeStudy[currentBookNum] ) {
-                    missedLifeStudy[currentBookNum].append(lifeStudyNum);
+                if (missedLifeStudy[currentBookNum]) {
+                    missedLifeStudy[currentBookNum].push(lifeStudyNum);
                 } else {
                     missedLifeStudy[currentBookNum] = [lifeStudyNum];
                 }
