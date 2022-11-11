@@ -35,5 +35,4 @@ const main = () => {
 };
 
 // main();
-console.log('here1');
 crawl_life_study_audio();

@@ -43,9 +43,9 @@ var BU_CHONG_BEN_RANGE_LISTS = [[1, 37], [101, 150], [201, 258], [301, 349], [40
 var BU_CHONG_RANGE = BU_CHONG_BEN_RANGE_LISTS.map(function (range) { return (0, utils_1.getRange)(range[0], range[1]); }).flat(1);
 var DA_BEN_URL_PREFIX = 'https://www.hymnal.net/cn/hymn/ch/';
 var BU_CHONG_BEN_URL_PREFIX = 'https://www.hymnal.net/cn/hymn/ts/';
-var DA_BEN_FILE_PREFIX = 'assets/daBen/';
-var BU_CHONG_BEN_FILE_PREFIX = 'assets/buChongBen/';
-var fetchSong = function (url) { return __awaiter(void 0, void 0, void 0, function () {
+var DA_BEN_FILE_PREFIX = 'assets/hymn/da_ben/';
+var BU_CHONG_BEN_FILE_PREFIX = 'assets/hymn/bu_chong_ben/';
+var fetchTitleAndLyrics = function (url) { return __awaiter(void 0, void 0, void 0, function () {
     var response, html, $, content;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -68,11 +68,11 @@ var fetchSong = function (url) { return __awaiter(void 0, void 0, void 0, functi
         }
     });
 }); };
-var fetchAndSaveSong = function (songUrl, songFileName) { return __awaiter(void 0, void 0, void 0, function () {
+var fetchAndSaveTitleAndLyrics = function (songUrl, songFileName) { return __awaiter(void 0, void 0, void 0, function () {
     var content;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, fetchSong(songUrl)];
+            case 0: return [4 /*yield*/, fetchTitleAndLyrics(songUrl)];
             case 1:
                 content = _a.sent();
                 (0, utils_1.saveFile)(songFileName, content);
@@ -93,7 +93,7 @@ function default_1() {
                             case 0:
                                 songUrl = DA_BEN_URL_PREFIX + songNumber;
                                 songFileName = DA_BEN_FILE_PREFIX + songNumber;
-                                return [4 /*yield*/, fetchAndSaveSong(songUrl, songFileName)];
+                                return [4 /*yield*/, fetchAndSaveTitleAndLyrics(songUrl, songFileName)];
                             case 1:
                                 _a.sent();
                                 return [2 /*return*/];
@@ -110,7 +110,7 @@ function default_1() {
                                 songUrl = BU_CHONG_BEN_URL_PREFIX + songNumber;
                                 songFileName = BU_CHONG_BEN_FILE_PREFIX + songNumber;
                                 // console.log({songUrl, songFileName});
-                                return [4 /*yield*/, fetchAndSaveSong(songUrl, songFileName)];
+                                return [4 /*yield*/, fetchAndSaveTitleAndLyrics(songUrl, songFileName)];
                             case 1:
                                 // console.log({songUrl, songFileName});
                                 _a.sent();

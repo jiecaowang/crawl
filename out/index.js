@@ -79,6 +79,5 @@ var main = function () {
     });
 };
 // main();
-console.log('here1');
 (0, crawl_life_study_1.crawl_life_study_audio)();
 //# sourceMappingURL=index.js.map

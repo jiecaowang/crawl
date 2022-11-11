@@ -8,10 +8,10 @@ const BU_CHONG_RANGE = BU_CHONG_BEN_RANGE_LISTS.map((range) => {return getRange(
 const DA_BEN_URL_PREFIX = 'https://www.hymnal.net/cn/hymn/ch/';
 const BU_CHONG_BEN_URL_PREFIX = 'https://www.hymnal.net/cn/hymn/ts/';
 
-const DA_BEN_FILE_PREFIX = 'assets/daBen/';
-const BU_CHONG_BEN_FILE_PREFIX = 'assets/buChongBen/';
+const DA_BEN_FILE_PREFIX = 'assets/hymn/da_ben/';
+const BU_CHONG_BEN_FILE_PREFIX = 'assets/hymn/bu_chong_ben/';
 
-const fetchSong = async (url: string ) => {
+const fetchTitleAndLyrics = async (url: string ) => {
     console.log({url}); 
     const response = await fetch(url);
     const html = await response.text();
@@ -26,8 +26,8 @@ const fetchSong = async (url: string ) => {
     return content;
 };
 
-const fetchAndSaveSong = async (songUrl: string , songFileName: string) => {
-    const content = await fetchSong(songUrl);
+const fetchAndSaveTitleAndLyrics = async (songUrl: string , songFileName: string) => {
+    const content = await fetchTitleAndLyrics(songUrl);
     
     saveFile(songFileName, content);
 };
@@ -39,14 +39,14 @@ export default async function() {
     DA_BEN_RANGE.forEach(async function(songNumber) {
         const songUrl = DA_BEN_URL_PREFIX + songNumber;
         const songFileName = DA_BEN_FILE_PREFIX + songNumber;
-        await fetchAndSaveSong(songUrl, songFileName);
+        await fetchAndSaveTitleAndLyrics(songUrl, songFileName);
     });
     
     BU_CHONG_RANGE.forEach(async function(songNumber) {
         const songUrl = BU_CHONG_BEN_URL_PREFIX + songNumber;
         const songFileName = BU_CHONG_BEN_FILE_PREFIX + songNumber;
         // console.log({songUrl, songFileName});
-        await fetchAndSaveSong(songUrl, songFileName);
+        await fetchAndSaveTitleAndLyrics(songUrl, songFileName);
     });
     
     // console.log({BU_CHONG_RANGE});

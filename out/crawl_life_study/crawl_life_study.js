@@ -38,39 +38,95 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.crawl_life_study_audio = void 0;
 var cheerio = require("cheerio");
-// const iconv = require ('Iconv-lite');
-var fetchAudio = function (bookUrl) { return __awaiter(void 0, void 0, void 0, function () {
-    var response, html, $, content;
+var iconv = require("iconv-lite");
+var assert = require("node:assert/strict");
+var fs = require("fs");
+var utils_1 = require("../utils");
+var axios = require('axios');
+var BOOK_URL_PREFIX = 'https://www.rucoc.com/Selbooks/listen/NEW/';
+var BOOK_URL_SUFFIX = '.htm';
+var FIRST_BOOK_NUM = 1;
+var FIRST_LIFE_STUDY_NUM = 1;
+var AUDIO_URL_PREFIX = 'https://www.rucoc.com/Selbooks/listen/ListenLS/';
+var fetchAudio = function (currentBookNum) { return __awaiter(void 0, void 0, void 0, function () {
+    var bookUrl, response, binaryHtml, chineseHtml, $, content, lastRowString, lastLifeStudyNumArray, lastLifeStudyNum, lifeStudyNumRange;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, fetch(bookUrl)];
+            case 0:
+                bookUrl = "".concat(BOOK_URL_PREFIX).concat(currentBookNum).concat(BOOK_URL_SUFFIX);
+                return [4 /*yield*/, axios.request({
+                        method: 'GET',
+                        url: bookUrl,
+                        responseType: 'arraybuffer',
+                        responseEncoding: 'binary'
+                    })];
             case 1:
                 response = _a.sent();
-                return [4 /*yield*/, response.text()];
-            case 2:
-                html = _a.sent();
-                $ = cheerio.load(html);
+                binaryHtml = response.data;
+                chineseHtml = iconv.decode(binaryHtml, 'gb2312');
+                $ = cheerio.load(chineseHtml);
                 content = $('tbody tr:last-child td:first-child font');
                 if (content.has('br')) {
-                    console.log('get into br block');
                     content.remove('br');
                 }
-                // const converted = iconv.decode(content.text(), 'GB2312');
-                console.log(content.text());
+                lastRowString = content.text();
+                console.log("last row string: ".concat(lastRowString));
+                lastLifeStudyNumArray = Array.from(lastRowString.matchAll(/第\s+(\d+)\s+篇/g));
+                assert.strictEqual(lastLifeStudyNumArray.length, 1, "Should only have 1 place stating the last life study number");
+                lastLifeStudyNum = lastLifeStudyNumArray[0][1];
+                console.log("last life study num: ".concat(lastLifeStudyNum));
+                lifeStudyNumRange = (0, utils_1.getRange)(FIRST_LIFE_STUDY_NUM, Number(lastLifeStudyNum));
+                lifeStudyNumRange.forEach(function (lifeStudyNum) {
+                    return __awaiter(this, void 0, void 0, function () {
+                        var bookSlashLifeStudyMp3, audioUrl, audioResponse, audioFilePath;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    bookSlashLifeStudyMp3 = "".concat(currentBookNum, "/").concat(lifeStudyNum, ".mp3");
+                                    audioUrl = "".concat(AUDIO_URL_PREFIX).concat(bookSlashLifeStudyMp3);
+                                    return [4 /*yield*/, axios.request({
+                                            method: 'GET',
+                                            url: audioUrl,
+                                            responseType: 'arraybuffer',
+                                            headers: {
+                                                'Content-Type': 'audio/mpeg',
+                                            },
+                                        })];
+                                case 1:
+                                    audioResponse = _a.sent();
+                                    audioFilePath = "assets/life_study/".concat(bookSlashLifeStudyMp3);
+                                    fs.writeFileSync(audioFilePath, audioResponse.data, {
+                                        flag: 'w'
+                                        //Open file for writing. The file is created (if it does not exist) or truncated (if it exists). 
+                                        //https://stackoverflow.com/questions/27920892/in-fs-writefileoption-how-an-options-parameter-generally-work
+                                    });
+                                    console.log("Finished saving ".concat(audioUrl, " to ").concat(audioFilePath));
+                                    return [2 /*return*/];
+                            }
+                        });
+                    });
+                });
                 return [2 /*return*/];
         }
     });
 }); };
 var crawl_life_study_audio = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var allBookNums;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                console.log('here');
-                return [4 /*yield*/, fetchAudio("https://www.rucoc.com/Selbooks/listen/NEW/4.htm")];
-            case 1:
-                _a.sent();
-                return [2 /*return*/];
-        }
+        allBookNums = (0, utils_1.getRange)(1, 66);
+        allBookNums.forEach(function (currentBookNum) {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, fetchAudio(currentBookNum)];
+                        case 1:
+                            _a.sent();
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        });
+        return [2 /*return*/];
     });
 }); };
 exports.crawl_life_study_audio = crawl_life_study_audio;
